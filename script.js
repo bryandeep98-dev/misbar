@@ -9,19 +9,51 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeMovies = [];   
     let currentPage = 1;
 
-    // --- LOGIKA HALAMAN UTAMA (INDEX) ---
-    const grid = document.getElementById('movie-grid');
-    
-    if (grid) {
-        fetch('movies.json')
-            .then(res => res.json())
-            .then(data => {
-                allMovies = data;
-                activeMovies = data; 
-                renderPagination(); 
-            });
+    // --- FUNGSI PEMBUAT SLUG (JUDUL KE URL) ---
+    // Contoh: "The Dark Knight" -> "the-dark-knight"
+    function createSlug(title) {
+        return title.toLowerCase()
+            .replace(/[^\w\s-]/g, '') // Hapus karakter aneh
+            .replace(/\s+/g, '-')     // Ganti spasi dengan strip
+            .replace(/-+/g, '-');     // Hapus strip ganda
+    }
 
-        function renderPagination() {
+    // --- CEK APAKAH KITA DI HALAMAN HOME ATAU FILM ---
+    const path = window.location.pathname;
+    const isHome = path === '/' || path === '/index.html';
+
+    // Fetch Database
+    fetch('movies.json')
+        .then(res => res.json())
+        .then(data => {
+            allMovies = data;
+            
+            if (isHome) {
+                // LOGIKA HOME PAGE
+                activeMovies = data;
+                initHomePage();
+            } else {
+                // LOGIKA HALAMAN NONTON (URL: /judul-film)
+                const currentSlug = path.substring(1); // Ambil teks setelah tanda '/'
+                const movie = allMovies.find(m => createSlug(m.title) === currentSlug);
+                
+                if (movie) {
+                    initWatchPage(movie);
+                } else {
+                    // Jika film tidak ditemukan di database
+                    document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50px;'>Film tidak ditemukan :(</h1><center><a href='/' style='color:red;'>Kembali ke Home</a></center>";
+                }
+            }
+        })
+        .catch(err => console.error("Gagal memuat data:", err));
+
+
+    // --- LOGIKA HALAMAN UTAMA ---
+    function initHomePage() {
+        const grid = document.getElementById('movie-grid');
+        if (!grid) return; // Pastikan elemen ada
+
+        window.renderPagination = function() {
             grid.innerHTML = '';
             const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
             const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -30,9 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
             moviesToShow.forEach(movie => {
                 const card = document.createElement('div');
                 card.className = 'movie-card';
-                // PERUBAHAN PENTING: Menggunakan <a> tag agar SEO Friendly
+                const slug = createSlug(movie.title);
+                
+                // Perubahan Link ke format /judul-film
                 card.innerHTML = `
-                    <a href="watch.html?id=${movie.id}" style="text-decoration:none; color:inherit;">
+                    <a href="/${slug}" style="text-decoration:none; color:inherit;">
                         <img src="${movie.poster_url}" alt="${movie.title}" loading="lazy">
                         <div class="movie-info">
                             <h3>${movie.title}</h3>
@@ -43,58 +77,87 @@ document.addEventListener('DOMContentLoaded', () => {
                 grid.appendChild(card);
             });
             updatePaginationButtons();
-        }
-        
-        // ... (Fungsi updatePaginationButtons, changePage, filterCategory, searchInput TETAP SAMA seperti sebelumnya) ...
+        };
+
+        // Jalankan render pertama
+        renderPagination();
+
+        // Setup Event Listeners (Search, Filter, Pagination)
+        setupHomeEvents();
     }
 
-    // --- LOGIKA HALAMAN NONTON (WATCH) ---
-    const videoPlayer = document.getElementById('videoPlayer');
-    
-    if (videoPlayer) {
-        // 1. Ambil ID dari URL (contoh: ?id=5)
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieId = parseInt(urlParams.get('id'));
+    function setupHomeEvents() {
+        // Tombol Pagination
+        window.changePage = function(direction) {
+            currentPage += direction;
+            renderPagination();
+            document.querySelector('.section-header').scrollIntoView({ behavior: 'smooth' });
+        };
 
-        if (!movieId) { window.location.href = 'index.html'; return; }
+        // Filter Kategori
+        window.filterCategory = function(category) {
+            currentPage = 1;
+            if (category === 'all') activeMovies = allMovies;
+            else activeMovies = allMovies.filter(m => m.genre && m.genre.toLowerCase().includes(category.toLowerCase()));
+            renderPagination();
+        };
 
-        // 2. Fetch data lagi (karena kita tidak pakai localStorage)
-        fetch('movies.json')
-            .then(res => res.json())
-            .then(movies => {
-                // Cari film yang ID-nya cocok
-                const movie = movies.find(m => m.id === movieId);
-                
-                if (movie) {
-                    loadMovieData(movie);
-                } else {
-                    document.getElementById('movieTitle').innerText = "Film tidak ditemukan";
-                }
+        // Pencarian
+        const searchInput = document.getElementById('searchInput');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase();
+                currentPage = 1;
+                activeMovies = allMovies.filter(m => m.title.toLowerCase().includes(keyword));
+                renderPagination();
             });
+        }
+    }
 
-        function loadMovieData(movie) {
-            videoPlayer.src = movie.video_url;
-            document.getElementById('movieTitle').innerText = movie.title;
-            document.title = `Nonton ${movie.title} - Misbar21`;
+    function updatePaginationButtons() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageIndicator = document.getElementById('pageIndicator');
+        const paginationContainer = document.getElementById('paginationContainer');
+        
+        if(!pageIndicator) return;
 
-            // Cek OMDb / Custom
-            if (movie.imdb_id) {
-                fetch(`https://www.omdbapi.com/?i=${movie.imdb_id}&apikey=${API_KEY}&plot=full`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.Response === "True") {
-                            document.getElementById('movieYear').innerText = data.Year;
-                            document.getElementById('movieRating').innerText = data.imdbRating;
-                            document.getElementById('movieRuntime').innerText = data.Runtime;
-                            document.getElementById('movieGenre').innerText = data.Genre;
-                            document.getElementById('moviePlot').innerText = data.Plot;
-                            document.getElementById('movieActors').innerText = data.Actors;
-                        }
-                    });
-            } else {
-                document.getElementById('movieGenre').innerText = movie.genre;
-                document.getElementById('moviePlot').innerText = "Deskripsi tidak tersedia.";
-            }
+        const totalPages = Math.ceil(activeMovies.length / ITEMS_PER_PAGE);
+        pageIndicator.innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage >= totalPages;
+        paginationContainer.style.display = activeMovies.length === 0 ? 'none' : 'flex';
+    }
+
+
+    // --- LOGIKA HALAMAN NONTON ---
+    function initWatchPage(movie) {
+        // Pastikan kita ada di halaman yang punya video player
+        // Karena Vercel me-rewrite ke watch.html, elemen2 ini harusnya ada
+        const videoPlayer = document.getElementById('videoPlayer');
+        if (!videoPlayer) return;
+
+        videoPlayer.src = movie.video_url;
+        document.getElementById('movieTitle').innerText = movie.title;
+        document.title = `Nonton ${movie.title} - Misbar21`;
+
+        // Ambil Data OMDb
+        if (movie.imdb_id) {
+            fetch(`https://www.omdbapi.com/?i=${movie.imdb_id}&apikey=${API_KEY}&plot=full`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.Response === "True") {
+                        if(document.getElementById('movieYear')) document.getElementById('movieYear').innerText = data.Year;
+                        if(document.getElementById('movieRating')) document.getElementById('movieRating').innerText = data.imdbRating;
+                        if(document.getElementById('movieRuntime')) document.getElementById('movieRuntime').innerText = data.Runtime;
+                        if(document.getElementById('movieGenre')) document.getElementById('movieGenre').innerText = data.Genre;
+                        if(document.getElementById('moviePlot')) document.getElementById('moviePlot').innerText = data.Plot;
+                        if(document.getElementById('movieActors')) document.getElementById('movieActors').innerText = data.Actors;
+                    }
+                });
+        } else {
+            if(document.getElementById('movieGenre')) document.getElementById('movieGenre').innerText = movie.genre;
+            if(document.getElementById('moviePlot')) document.getElementById('moviePlot').innerText = "Deskripsi tidak tersedia.";
         }
     }
 });
