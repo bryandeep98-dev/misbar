@@ -1,34 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- KONFIGURASI ---
-    const API_KEY = '28ace874'; // API Key Anda sudah terpasang
+    const API_KEY = '28ace874'; 
+    const ITEMS_PER_PAGE = 24; // Ubah angka ini jika ingin lebih banyak/sedikit
     
+    // --- GLOBAL VARIABLES ---
+    let allMovies = [];      // Menyimpan SEMUA data dari JSON
+    let activeMovies = [];   // Menyimpan data yang SEDANG DITAMPILKAN (setelah filter/search)
+    let currentPage = 1;
+
     // --- LOGIKA HALAMAN UTAMA (INDEX) ---
     const grid = document.getElementById('movie-grid');
     const searchInput = document.getElementById('searchInput');
-    let allMovies = []; // Variabel global untuk menampung semua data
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const paginationContainer = document.getElementById('paginationContainer');
 
     if (grid) {
-        // Fetch data dari JSON lokal
+        // Fetch data
         fetch('movies.json')
             .then(res => res.json())
             .then(data => {
-                allMovies = data; // Simpan data asli
-                renderMovies(allMovies); // Tampilkan semua film di awal
-                document.getElementById('loadingText').style.display = 'none';
+                allMovies = data;
+                activeMovies = data; // Awalnya, aktif = semua film
+                renderPagination();  // Tampilkan halaman 1
             })
             .catch(err => console.error("Gagal memuat JSON:", err));
 
-        // Fungsi Render Film
-        function renderMovies(movies) {
+        // Fungsi Memotong & Menampilkan Film sesuai Halaman
+        function renderPagination() {
             grid.innerHTML = '';
             
-            if(movies.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%;">Film tidak ditemukan.</p>';
-                return;
-            }
+            // Hitung start dan end untuk slice array
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const moviesToShow = activeMovies.slice(startIndex, endIndex);
 
-            movies.forEach(movie => {
+            // Tampilkan film
+            moviesToShow.forEach(movie => {
                 const card = document.createElement('div');
                 card.className = 'movie-card';
                 card.innerHTML = `
@@ -44,47 +54,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 grid.appendChild(card);
             });
+
+            // Update Tombol Navigasi
+            updatePaginationButtons();
         }
 
-        // --- FUNGSI FILTER KATEGORI (BARU) ---
-        // Fungsi ini harus bisa diakses dari HTML (window scope)
-        window.filterCategory = function(category) {
-            if (category === 'all') {
-                renderMovies(allMovies);
-            } else {
-                // Filter film berdasarkan genre yang mengandung kata tersebut
-                const filtered = allMovies.filter(m => 
-                    m.genre && m.genre.toLowerCase().includes(category.toLowerCase())
-                );
-                renderMovies(filtered);
-            }
+        // Fungsi Update Status Tombol
+        function updatePaginationButtons() {
+            const totalPages = Math.ceil(activeMovies.length / ITEMS_PER_PAGE);
+            
+            pageIndicator.innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
+            
+            // Disable tombol Prev jika di halaman 1
+            prevBtn.disabled = currentPage === 1;
+            
+            // Disable tombol Next jika di halaman terakhir
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+            // Sembunyikan navigasi jika tidak ada film
+            paginationContainer.style.display = activeMovies.length === 0 ? 'none' : 'flex';
+        }
+
+        // Fungsi Ganti Halaman (Dipanggil dari HTML onclick)
+        window.changePage = function(direction) {
+            currentPage += direction;
+            renderPagination();
+            // Scroll ke atas grid agar user tidak bingung
+            document.querySelector('.section-header').scrollIntoView({ behavior: 'smooth' });
         };
 
-        // Fitur Pencarian (Search)
+        // --- FILTER KATEGORI ---
+        window.filterCategory = function(category) {
+            currentPage = 1; // Reset ke halaman 1 setiap ganti kategori
+            
+            if (category === 'all') {
+                activeMovies = allMovies;
+            } else {
+                activeMovies = allMovies.filter(m => 
+                    m.genre && m.genre.toLowerCase().includes(category.toLowerCase())
+                );
+            }
+            renderPagination();
+        };
+
+        // --- PENCARIAN ---
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
-            const filtered = allMovies.filter(m => m.title.toLowerCase().includes(keyword));
-            renderMovies(filtered);
+            currentPage = 1; // Reset ke halaman 1 saat mengetik
+            
+            activeMovies = allMovies.filter(m => 
+                m.title.toLowerCase().includes(keyword)
+            );
+            renderPagination();
         });
     }
+
     // --- LOGIKA HALAMAN NONTON (WATCH) ---
     const videoPlayer = document.getElementById('videoPlayer');
     
     if (videoPlayer) {
-        // Ambil data dari LocalStorage
         const movie = JSON.parse(localStorage.getItem('activeMovie'));
 
         if (!movie) {
-            window.location.href = 'index.html'; // Balik ke home jika tidak ada data
+            window.location.href = 'index.html';
             return;
         }
 
-        // Set Video Player dan Judul Dasar
         videoPlayer.src = movie.video_url;
         document.getElementById('movieTitle').innerText = movie.title;
         document.title = `Nonton ${movie.title} - Misbar21`;
 
-        // Ambil Detail Tambahan dari OMDb API
+        // Ambil data OMDb jika ada IMDb ID
         if (movie.imdb_id) {
             fetch(`https://www.omdbapi.com/?i=${movie.imdb_id}&apikey=${API_KEY}&plot=full`)
                 .then(res => res.json())
@@ -98,8 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('movieActors').innerText = data.Actors;
                     }
                 })
-                .catch(err => console.log("Gagal ambil data API:", err));
+                .catch(err => console.log("API Error:", err));
+        } else {
+            // Jika film Adult/Custom tanpa IMDb
+            document.getElementById('movieGenre').innerText = movie.genre;
+            document.getElementById('moviePlot').innerText = "Deskripsi tidak tersedia untuk konten ini.";
         }
     }
-
 });
