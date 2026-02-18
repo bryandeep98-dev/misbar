@@ -1,47 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sitemap Generator</title>
-</head>
 <body>
-    <h3>Copy kode di bawah ini dan simpan sebagai sitemap.xml</h3>
+    <h3>Copy kode di bawah ke sitemap.xml</h3>
     <textarea id="output" style="width: 100%; height: 500px; font-family: monospace;"></textarea>
-
     <script>
-        // Ganti URL ini jika nama file JSON Anda berbeda
+        // Fungsi Slug sama persis dengan script.js
+        function createSlug(title) {
+            return title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+        }
+
         fetch('movies.json')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n';
-                xmlContent += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+                let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+                
+                // Home
+                xml += ' <url><loc>https://www.misbar21.com/</loc><priority>1.0</priority></url>\n';
 
-                // 1. Tambahkan Halaman Utama
-                xmlContent += '  <url>\n';
-                xmlContent += '    <loc>https://www.misbar21.com/</loc>\n';
-                xmlContent += '    <priority>1.00</priority>\n';
-                xmlContent += '  </url>\n';
-
-                // 2. Loop semua film dari JSON
-                data.forEach(movie => {
-                    // Pastikan ID ada
-                    if(movie.id) {
-                        xmlContent += '  <url>\n';
-                        // URL menggunakan parameter ?id=...
-                        xmlContent += `    <loc>https://www.misbar21.com/watch.html?id=${movie.id}</loc>\n`;
-                        xmlContent += '    <priority>0.80</priority>\n';
-                        xmlContent += '  </url>\n';
-                    }
+                // Loop Movies dengan SLUG
+                data.forEach(m => {
+                    const slug = createSlug(m.title);
+                    xml += ` <url><loc>https://www.misbar21.com/${slug}</loc><priority>0.8</priority></url>\n`;
                 });
 
-                xmlContent += '</urlset>';
-
-                // Tampilkan di Textarea
-                document.getElementById('output').value = xmlContent;
-            })
-            .catch(error => {
-                document.getElementById('output').value = "Gagal membaca movies.json. Pastikan file ini satu folder dengan movies.json";
-                console.error(error);
+                xml += '</urlset>';
+                document.getElementById('output').value = xml;
             });
     </script>
 </body>
