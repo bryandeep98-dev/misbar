@@ -196,3 +196,85 @@ body { background-color: var(--dark); color: var(--light); }
     font-size: 14px;
     font-weight: 500;
 }
+/* --- LAYOUT HALAMAN NONTON (KIRI-KANAN) --- */
+.watch-container { 
+    max-width: 1200px; /* Diperlebar sedikit agar banner muat */
+}
+
+.watch-layout {
+    display: grid;
+    /* Kiri mengambil sisa ruang (1fr), Kanan pas 300px */
+    grid-template-columns: 1fr 300px; 
+    gap: 30px;
+    align-items: start;
+}
+
+/* --- SIDEBAR & BANNER --- */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 15px;
+    border-radius: 8px;
+    position: sticky; /* Membuat sidebar menempel saat di-scroll (opsional) */
+    top: 80px; 
+}
+
+.sidebar-title {
+    font-size: 12px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: -5px;
+}
+
+.banner-box {
+    width: 300px;
+    height: 250px;
+    background-color: #222;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #333;
+}
+
+.banner-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+/* --- RESPONSIVE UNTUK HP & TABLET --- */
+@media (max-width: 992px) {
+    .watch-layout {
+        /* Berubah jadi 1 kolom (atas-bawah) jika layarnya kecil */
+        grid-template-columns: 1fr; 
+    }
+    
+    .sidebar {
+        /* Banner berjejer ke samping di HP/Tablet jika muat */
+        flex-direction: row; 
+        flex-wrap: wrap;
+        justify-content: center;
+        position: static; /* Matikan sticky di HP */
+        background: transparent;
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    .sidebar-title {
+        width: 100%; /* Tulisan sponsor tetap di atas banner */
+    }
+}
+
+@media (max-width: 650px) {
+    .sidebar {
+        /* Balik jadi atas bawah lagi jika HP layarnya sempit */
+        flex-direction: column; 
+        align-items: center;
+    }
+}
