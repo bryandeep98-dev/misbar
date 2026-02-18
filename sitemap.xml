@@ -1,0 +1,24 @@
+// Paste ini di Console Browser saat membuka website Anda (pastikan movies.json sudah termuat)
+fetch('movies.json')
+    .then(res => res.json())
+    .then(data => {
+        let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
+        sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+        
+        // Halaman Utama
+        sitemap += '  <url>\n';
+        sitemap += '    <loc>https://www.misbar21.com/</loc>\n';
+        sitemap += '    <priority>1.0</priority>\n';
+        sitemap += '  </url>\n';
+
+        // Loop semua film
+        data.forEach(movie => {
+            sitemap += '  <url>\n';
+            sitemap += `    <loc>https://www.misbar21.com/watch.html?id=${movie.id}</loc>\n`;
+            sitemap += '    <priority>0.8</priority>\n';
+            sitemap += '  </url>\n';
+        });
+
+        sitemap += '</urlset>';
+        console.log(sitemap);
+    });
