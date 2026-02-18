@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { 
+      "source": "/((?!index.html|style.css|script.js|movies.json|sitemap.xml|favicon.ico).*)", 
+      "destination": "/watch.html" 
+    }
+  ]
+}
