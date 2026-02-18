@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonton Film - Misbar21</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration:none; color:inherit;">MISBAR<span>21</span></a></div>
+    </nav>
+
+    <div class="container watch-container">
+        <a href="index.html" class="back-btn">← Kembali ke Beranda</a>
+        
+        <div class="video-wrapper">
+            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+        </div>
+
+        <div class="movie-details">
+            <h1 id="movieTitle">Memuat Judul...</h1>
+            
+            <div class="meta-info">
+                <span id="movieYear">-</span>
+                <span class="rating-badge">⭐ <span id="movieRating">0.0</span></span>
+                <span id="movieRuntime">-</span>
+            </div>
+
+            <div class="genre-tags" id="movieGenre"></div>
+
+            <div class="plot-box">
+                <h3>Sinopsis</h3>
+                <p id="moviePlot">Sedang mengambil data dari IMDb...</p>
+            </div>
+
+            <div class="cast-box">
+                <strong>Pemeran:</strong> <span id="movieActors">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
