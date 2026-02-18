@@ -17,6 +17,83 @@ body { background-color: var(--dark); color: var(--light); }
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
+/* Update Navbar Layout */
+.navbar {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 15px 5%;
+    background-color: rgba(0,0,0,0.95);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Jarak antara Logo dan Menu */
+}
+
+/* Style Menu Link */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--light);
+    font-weight: 500;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--primary);
+}
+
+/* --- Style Dropdown (Menu Kategori) --- */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none; /* Sembunyikan secara default */
+    position: absolute;
+    background-color: #1f1f1f;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    top: 30px; /* Jarak dari menu induk */
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    border-bottom: 1px solid #333;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Tampilkan dropdown saat di-hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Responsif untuk HP (Menu agak mengecil) */
+@media (max-width: 768px) {
+    .nav-left { gap: 15px; }
+    .nav-links { gap: 10px; }
+    .nav-links a { font-size: 14px; }
+    .logo { font-size: 20px; }
+}
 .logo { font-size: 28px; font-weight: 700; color: var(--primary); letter-spacing: 1px; }
 .logo span { color: var(--light); }
 .search-box input {
@@ -79,4 +156,5 @@ body { background-color: var(--dark); color: var(--light); }
     .hero { height: 200px; }
     .hero-content h1 { font-size: 1.8rem; }
     .search-box input { width: 150px; }
+
 }
