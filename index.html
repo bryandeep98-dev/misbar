@@ -52,7 +52,12 @@
         <div id="movie-grid" class="movie-grid">
             </div>
 
-        <p id="loadingText" style="text-align: center; margin-top: 20px;">Memuat film...</p>
+        <p id="loadingText" style="text-align: center; margin-top: 20px;">Memuat film...</p>     
+        <div class="pagination-container" id="paginationContainer">
+            <button id="prevBtn" onclick="changePage(-1)">&#10094; Sebelumnya</button>
+            <span id="pageIndicator">Halaman 1</span>
+            <button id="nextBtn" onclick="changePage(1)">Selanjutnya &#10095;</button>
+        </div>
     </main>
 
     <footer>
@@ -63,5 +68,6 @@
 </body>
 
 </html>
+
 
 
