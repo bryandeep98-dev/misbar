@@ -3,6 +3,7 @@
     "id": 1,
     "title": "Inception",
     "imdb_id": "tt1375666",
+    "genre": "Sci-Fi",
     "video_url": "https://www.youtube.com/embed/YoHD9XEInc0",
     "poster_url": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg"
   },
@@ -10,6 +11,7 @@
     "id": 2,
     "title": "The Dark Knight",
     "imdb_id": "tt0468569",
+    "genre": "Action",
     "video_url": "https://www.youtube.com/embed/EXeTwQWrcwY",
     "poster_url": "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg"
   },
@@ -17,7 +19,9 @@
     "id": 3,
     "title": "Interstellar",
     "imdb_id": "tt0816692",
+    "genre": "Action",
     "video_url": "https://www.youtube.com/embed/zSWdZVtXT7E",
     "poster_url": "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"
   }
+
 ]
