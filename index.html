@@ -11,12 +11,30 @@
 </head>
 <body>
 
-    <nav class="navbar">
+<nav class="navbar">
+    <div class="nav-left">
         <div class="logo">MISBAR<span>21</span></div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cari film...">
-        </div>
-    </nav>
+        
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Kategori ▾</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="filterCategory('all')">Semua</a>
+                    <a href="#" onclick="filterCategory('Action')">Action</a>
+                    <a href="#" onclick="filterCategory('Horror')">Horror</a>
+                    <a href="#" onclick="filterCategory('Comedy')">Comedy</a>
+                    <a href="#" onclick="filterCategory('Drama')">Drama</a>
+                    <a href="#" onclick="filterCategory('Sci-Fi')">Sci-Fi</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Cari film...">
+    </div>
+</nav>
 
     <header class="hero">
         <div class="hero-content">
@@ -42,4 +60,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
