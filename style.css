@@ -158,3 +158,41 @@ body { background-color: var(--dark); color: var(--light); }
     .search-box input { width: 150px; }
 
 }
+/* --- PAGINATION (Navigasi Halaman) --- */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+.pagination-container button {
+    background-color: var(--dark-sec);
+    color: white;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.pagination-container button:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.pagination-container button:disabled {
+    background-color: #000;
+    color: #555;
+    border-color: #222;
+    cursor: not-allowed;
+}
+
+#pageIndicator {
+    color: var(--gray);
+    font-size: 14px;
+    font-weight: 500;
+}
