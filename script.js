@@ -164,5 +164,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if(document.getElementById('movieGenre')) document.getElementById('movieGenre').innerText = movie.genre;
             if(document.getElementById('moviePlot')) document.getElementById('moviePlot').innerText = "Deskripsi tidak tersedia.";
         }
+
+        // Coba load iklan dari ads.json
+        fetch('ads.json')
+            .then(res => res.json())
+            .then(adData => {
+                const adSidebar = document.getElementById('adSidebar');
+                if (adSidebar && adData.ad_html && adData.ad_html.trim() !== '') {
+                    adSidebar.style.display = 'flex';
+                    adSidebar.innerHTML = `<div class="sidebar-title">Sponsor</div>` + adData.ad_html;
+                }
+            })
+            .catch(err => console.log('Tidak ada iklan aktif saat ini.'));
     }
 });
