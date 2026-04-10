@@ -66,8 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Perubahan Link ke format /judul-film
                 card.innerHTML = `
-                    <a href="/${slug}" style="text-decoration:none; color:inherit;">
-                        <img src="${movie.poster_url}" alt="${movie.title}" loading="lazy">
+                    <a href="/${slug}" style="text-decoration:none; color:inherit; display:block; position:relative;">
+                        <div class="poster-container">
+                            <img src="${movie.poster_url}" alt="${movie.title}" loading="lazy">
+                            <div class="play-overlay">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
                         <div class="movie-info">
                             <h3>${movie.title}</h3>
                             <span style="font-size:12px; color:#aaa;">${movie.genre || 'Film'}</span>

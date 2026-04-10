@@ -1,280 +1,376 @@
 /* Reset & Base */
 :root {
     --primary: #e50914;
-    --dark: #141414;
-    --dark-sec: #1f1f1f;
+    --primary-glow: rgba(229, 9, 20, 0.4);
+    --dark: #101010;
+    --dark-sec: #1c1c1c;
     --light: #f5f5f5;
-    --gray: #aaa;
+    --gray: #b3b3b3;
+    --glass-bg: rgba(20, 20, 20, 0.75);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-body { background-color: var(--dark); color: var(--light); }
+body { background-color: var(--dark); color: var(--light); overflow-x: hidden; }
 
-/* Navbar */
-.navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 5%; background-color: rgba(0,0,0,0.95);
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-}
-/* Update Navbar Layout */
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--dark); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* --- Navbar (Glassmorphism) --- */
 .navbar {
     display: flex; 
     justify-content: space-between; 
     align-items: center;
     padding: 15px 5%;
-    background-color: rgba(0,0,0,0.95);
+    position: sticky; top: 0; z-index: 1000;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
 }
 
 .nav-left {
     display: flex;
     align-items: center;
-    gap: 30px; /* Jarak antara Logo dan Menu */
+    gap: 40px;
 }
 
-/* Style Menu Link */
+.logo { font-size: 28px; font-weight: 700; color: var(--primary); letter-spacing: 1px; }
+.logo span { color: var(--light); }
+
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 25px;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: var(--light);
+    color: var(--gray);
     font-weight: 500;
-    font-size: 16px;
-    transition: 0.3s;
+    font-size: 15px;
+    transition: color 0.3s;
 }
 
 .nav-links a:hover, .nav-links a.active {
-    color: var(--primary);
+    color: var(--light);
 }
 
-/* --- Style Dropdown (Menu Kategori) --- */
+/* Dropdown Kategori */
 .dropdown {
     position: relative;
     display: inline-block;
 }
 
 .dropdown-content {
-    display: none; /* Sembunyikan secara default */
+    display: none;
     position: absolute;
-    background-color: #1f1f1f;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    background-color: rgba(28, 28, 28, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.05);
+    min-width: 180px;
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.5);
     z-index: 1000;
-    border-radius: 5px;
-    top: 30px; /* Jarak dari menu induk */
+    border-radius: 8px;
+    top: 100%;
+    margin-top: 15px;
+    overflow: hidden;
 }
 
 .dropdown-content a {
-    color: white;
-    padding: 12px 16px;
+    color: var(--light);
+    padding: 12px 20px;
     text-decoration: none;
     display: block;
     font-size: 14px;
-    border-bottom: 1px solid #333;
+    transition: background 0.3s, padding-left 0.3s;
 }
 
 .dropdown-content a:hover {
-    background-color: var(--primary);
-    color: white;
+    background-color: rgba(255,255,255,0.1);
+    padding-left: 25px; /* micro interaction */
 }
 
-/* Tampilkan dropdown saat di-hover */
 .dropdown:hover .dropdown-content {
     display: block;
+    animation: fadeIn 0.3s ease;
 }
 
-/* Responsif untuk HP (Menu agak mengecil) */
-@media (max-width: 768px) {
-    .nav-left { gap: 15px; }
-    .nav-links { gap: 10px; }
-    .nav-links a { font-size: 14px; }
-    .logo { font-size: 20px; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-.logo { font-size: 28px; font-weight: 700; color: var(--primary); letter-spacing: 1px; }
-.logo span { color: var(--light); }
+
+/* Search Box */
 .search-box input {
-    padding: 10px 15px; border-radius: 4px; border: 1px solid #333;
-    background: #000; color: white; width: 200px; transition: 0.3s;
+    padding: 10px 18px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); color: white; width: 220px; transition: all 0.3s ease;
+    outline: none;
 }
-.search-box input:focus { width: 300px; border-color: var(--primary); outline: none; }
+.search-box input:focus { 
+    width: 280px; 
+    border-color: rgba(255,255,255,0.3); 
+    background: rgba(255,255,255,0.1);
+}
 
-/* Hero */
+/* --- Hero Section --- */
 .hero {
-    height: 350px; 
-    background: linear-gradient(to top, #141414, transparent), url('https://w0.peakpx.com/wallpaper/201/290/HD-wallpaper-movie-collage-movies.jpg');
-    background-size: cover; background-position: center;
+    position: relative;
+    height: 450px; 
+    background: url('https://w0.peakpx.com/wallpaper/201/290/HD-wallpaper-movie-collage-movies.jpg');
+    background-size: cover; 
+    background-position: top;
     display: flex; align-items: center; justify-content: center; text-align: center;
 }
-.hero-content h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 4px #000; }
 
-/* Grid Film */
-.container { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
-.section-header { margin-bottom: 25px; border-left: 5px solid var(--primary); padding-left: 15px; }
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, var(--dark) 0%, rgba(16,16,16,0.6) 50%, rgba(0,0,0,0.8) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+    animation: slideUpFade 1s ease-out forwards;
+}
+
+.hero-content h1 { 
+    font-size: 3.5rem; 
+    font-weight: 700;
+    margin-bottom: 15px; 
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8); 
+    letter-spacing: -1px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    color: var(--gray);
+    margin-bottom: 30px;
+}
+
+.hero-btn {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.hero-btn:hover {
+    background: #f40612;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(229, 9, 20, 0.6);
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Grid & Section --- */
+.container { padding: 50px 5%; max-width: 1400px; margin: 0 auto; }
+.section-header { margin-bottom: 30px; display: flex; align-items: center; }
+.section-header h2 { font-size: 1.5rem; font-weight: 600; }
+.section-header::before { 
+    content: ''; display: inline-block; width: 4px; height: 24px; 
+    background: var(--primary); margin-right: 15px; border-radius: 4px;
+}
+
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
 }
 
-/* Kartu Film */
+/* --- Kartu Film Premium --- */
 .movie-card {
-    background: var(--dark-sec); border-radius: 8px; overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; position: relative;
-}
-.movie-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4); }
-.movie-card img { width: 100%; height: 240px; object-fit: cover; }
-.movie-info { padding: 12px; }
-.movie-info h3 { font-size: 14px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Halaman Nonton */
-.watch-container { max-width: 1100px; }
-.back-btn { display: inline-block; margin-bottom: 20px; color: var(--gray); text-decoration: none; font-weight: 600; }
-.back-btn:hover { color: var(--primary); }
-
-.video-wrapper {
-    position: relative; padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-    height: 0; background: #000; margin-bottom: 25px; border-radius: 8px; overflow: hidden;
-}
-.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-
-.movie-details h1 { font-size: 2rem; margin-bottom: 10px; }
-.meta-info { margin-bottom: 15px; font-size: 0.9rem; color: var(--gray); display: flex; align-items: center; gap: 15px; }
-.rating-badge { background: #f5c518; color: #000; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-.genre-tags { color: var(--primary); font-weight: 600; margin-bottom: 20px; }
-
-.plot-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
-.plot-box h3 { margin-bottom: 10px; color: var(--light); }
-.plot-box p { line-height: 1.6; color: #ddd; }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .hero { height: 200px; }
-    .hero-content h1 { font-size: 1.8rem; }
-    .search-box input { width: 150px; }
-
-}
-/* --- PAGINATION (Navigasi Halaman) --- */
-.pagination-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 40px;
-    gap: 20px;
-    padding-bottom: 20px;
+    background: var(--dark-sec); border-radius: 10px; overflow: hidden;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-.pagination-container button {
-    background-color: var(--dark-sec);
+.movie-card:hover { 
+    transform: scale(1.05) translateY(-5px); 
+    z-index: 10;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px var(--primary-glow);
+}
+
+.poster-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 2 / 3;
+}
+
+.poster-container img { 
+    width: 100%; height: 100%; object-fit: cover; 
+    transition: transform 0.5s ease;
+}
+
+.movie-card:hover .poster-container img {
+    transform: scale(1.1);
+}
+
+/* Play Overlay on Card Hover */
+.play-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.movie-card:hover .play-overlay { opacity: 1; }
+
+.play-icon {
+    width: 50px; height: 50px;
     color: white;
-    border: 1px solid #333;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
+    background: var(--primary);
+    border-radius: 50%;
+    padding: 12px;
+    transform: scale(0.5);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.pagination-container button:hover {
-    background-color: var(--primary);
-    border-color: var(--primary);
+.movie-card:hover .play-icon {
+    transform: scale(1);
 }
 
-.pagination-container button:disabled {
-    background-color: #000;
-    color: #555;
-    border-color: #222;
-    cursor: not-allowed;
-}
+.movie-info { padding: 15px; }
+.movie-info h3 { font-size: 15px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-#pageIndicator {
-    color: var(--gray);
-    font-size: 14px;
-    font-weight: 500;
+/* --- Watch Page --- */
+.watch-container { max-width: 1200px; padding-top: 30px; }
+.back-btn { 
+    display: inline-flex; align-items: center; margin-bottom: 25px; 
+    color: var(--gray); text-decoration: none; font-weight: 500; 
+    transition: color 0.3s;
 }
-/* --- LAYOUT HALAMAN NONTON (KIRI-KANAN) --- */
-.watch-container { 
-    max-width: 1200px; /* Diperlebar sedikit agar banner muat */
-}
+.back-btn:hover { color: var(--light); }
 
 .watch-layout {
     display: grid;
-    /* Kiri mengambil sisa ruang (1fr), Kanan pas 300px */
     grid-template-columns: 1fr 300px; 
-    gap: 30px;
+    gap: 35px;
     align-items: start;
 }
 
-/* --- SIDEBAR & BANNER --- */
+.video-wrapper {
+    position: relative; padding-bottom: 56.25%; 
+    height: 0; background: #000; margin-bottom: 25px; 
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+.movie-details h1 { font-size: 2.2rem; margin-bottom: 15px; font-weight: 700; }
+.meta-info { 
+    margin-bottom: 20px; font-size: 0.95rem; color: var(--gray); 
+    display: flex; align-items: center; gap: 20px; 
+}
+.rating-badge { background: #f5c518; color: #000; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+
+.genre-tags { 
+    display: inline-block;
+    background: rgba(229, 9, 20, 0.1); 
+    color: var(--primary); 
+    font-weight: 600; 
+    padding: 5px 12px; 
+    border-radius: 20px;
+    margin-bottom: 25px; 
+    font-size: 0.9rem;
+}
+
+.plot-box { 
+    background: rgba(255,255,255,0.03); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-bottom: 25px; 
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.plot-box h3 { margin-bottom: 10px; font-size: 1.1rem; color: var(--light); }
+.plot-box p { line-height: 1.7; color: var(--gray); }
+
+.cast-box {
+    padding: 20px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* --- Sidebar --- */
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
     background: rgba(255, 255, 255, 0.02);
-    padding: 15px;
-    border-radius: 8px;
-    position: sticky; /* Membuat sidebar menempel saat di-scroll (opsional) */
-    top: 80px; 
+    padding: 20px;
+    border-radius: 12px;
+    position: sticky; top: 100px;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 .sidebar-title {
-    font-size: 12px;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: center;
-    margin-bottom: -5px;
+    font-size: 13px; color: var(--gray); text-transform: uppercase;
+    letter-spacing: 1.5px; text-align: center; font-weight: 600;
 }
 
 .banner-box {
-    width: 300px;
-    height: 250px;
-    background-color: #222;
-    margin: 0 auto;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #333;
+    width: 100%; height: 250px; background-color: #1a1a1a;
+    border-radius: 8px; overflow: hidden; display: flex;
+    justify-content: center; align-items: center;
+}
+.banner-box img { max-width: 100%; max-height: 100%; object-fit: cover; }
+
+/* --- Pagination --- */
+.pagination-container {
+    display: flex; justify-content: center; align-items: center;
+    margin-top: 50px; gap: 25px; padding-bottom: 30px;
 }
 
-.banner-box img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
+.pagination-container button {
+    background-color: var(--dark-sec); color: white; border: none;
+    padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: 600;
+    transition: all 0.3s;
 }
 
-/* --- RESPONSIVE UNTUK HP & TABLET --- */
+.pagination-container button:hover:not(:disabled) {
+    background-color: var(--primary); transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--primary-glow);
+}
+
+.pagination-container button:disabled { background-color: rgba(255,255,255,0.05); color: #555; cursor: not-allowed; }
+#pageIndicator { color: var(--gray); font-size: 14px; font-weight: 500; }
+
+/* Responsive Adjustments */
 @media (max-width: 992px) {
-    .watch-layout {
-        /* Berubah jadi 1 kolom (atas-bawah) jika layarnya kecil */
-        grid-template-columns: 1fr; 
-    }
-    
-    .sidebar {
-        /* Banner berjejer ke samping di HP/Tablet jika muat */
-        flex-direction: row; 
-        flex-wrap: wrap;
-        justify-content: center;
-        position: static; /* Matikan sticky di HP */
-        background: transparent;
-        padding: 0;
-        margin-top: 20px;
-    }
-
-    .sidebar-title {
-        width: 100%; /* Tulisan sponsor tetap di atas banner */
-    }
+    .watch-layout { grid-template-columns: 1fr; }
+    .sidebar { flex-direction: row; flex-wrap: wrap; justify-content: center; position: static; background: transparent; padding: 0; border: none; }
+    .sidebar-title { width: 100%; }
+    .banner-box { width: 300px; }
 }
 
-@media (max-width: 650px) {
-    .sidebar {
-        /* Balik jadi atas bawah lagi jika HP layarnya sempit */
-        flex-direction: column; 
-        align-items: center;
-    }
+@media (max-width: 768px) {
+    .nav-left { gap: 20px; }
+    .nav-links { gap: 15px; }
+    .search-box input { width: 160px; }
+    .search-box input:focus { width: 200px; }
+    .hero { height: 350px; }
+    .hero-content h1 { font-size: 2.2rem; }
+    .hero-content p { font-size: 1rem; }
+    .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
 }
